@@ -1,0 +1,5 @@
+.stack-work/
+*.hi
+app/Main
+day1.cabal
+*~
