@@ -1,0 +1,42 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 306fafa855c107fc3f47a68fde9af61be2c622ded57c7050b785726d4e7c937c
+
+name:           day9
+version:        0.1.0.0
+author:         tlarrieu
+maintainer:     tlarrieu
+build-type:     Simple
+
+library
+  exposed-modules:
+      Common
+      Computer
+  other-modules:
+      Paths_day9
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -O2
+  build-depends:
+      base >=4.7 && <5
+    , split
+    , vector
+  default-language: Haskell2010
+
+executable day9-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_day9
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -O2 -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , day9
+    , split
+    , vector
+  default-language: Haskell2010
