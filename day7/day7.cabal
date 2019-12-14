@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a4000326633920022ba444273bcdff4eba8fbf81c77344f31b6255b60e5ea6a6
+-- hash: 6b1c39b2cf7a780c406a169c7eda77f2bc8bd50a586e92fc0caa10c84304c353
 
 name:           day7
 version:        0.1.0.0
@@ -14,7 +14,9 @@ build-type:     Simple
 
 library
   exposed-modules:
+      Amplifiers
       Common
+      Computer
   other-modules:
       Paths_day7
   hs-source-dirs:
