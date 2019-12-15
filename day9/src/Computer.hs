@@ -9,12 +9,13 @@ module Computer
   , output
   , run
   , setInput
+  , state
   ) where
 
 import Data.Char (digitToInt)
+import Data.IntMap.Strict (IntMap, (!))
+import qualified Data.IntMap.Strict as M
 import Data.Maybe (mapMaybe)
-import Data.Vector (Vector, (!), (//), fromList)
-import qualified Data.Vector as V
 
 data Instruction
   = Mult (Int, Int, Int)
@@ -26,13 +27,16 @@ data Instruction
   | LessThan (Int, Int, Int)
   | Equals (Int, Int, Int)
   | Halt
-  deriving (Eq)
+  | Base Int
+  deriving (Eq, Show)
 
 data Mode
   = Ref
   | Val
+  | Rel
+  deriving (Show)
 
-type State = Vector Int
+type State = IntMap Int
 
 type Pointer = Int
 
@@ -42,7 +46,8 @@ type Output = Int
 
 data Computer =
   Computer
-    { input :: [Input]
+    { base :: Int
+    , input :: [Input]
     , output :: [Output]
     , pointer :: Pointer
     , state :: State
@@ -52,7 +57,14 @@ data Computer =
 type Predicate = Computer -> Bool
 
 build :: [Int] -> Computer
-build xs = Computer {input = [], output = [], pointer = 0, state = fromList xs}
+build xs =
+  Computer
+    { base = 0
+    , input = []
+    , output = []
+    , pointer = 0
+    , state = M.fromList $ zip [0 ..] xs
+    }
 
 run :: Predicate -> Computer -> Computer
 run predicate = (!! 1) . dropWhile predicate . iterate next
@@ -82,6 +94,7 @@ next :: Computer -> Computer
 next = instruction >>= next'
   where
     next' Halt = id
+    next' (Base i) = move 2 . incBase i
     next' (Add (a, b, i)) = move 4 . update (i, a + b)
     next' (Mult (a, b, i)) = move 4 . update (i, a * b)
     next' (Save i) = move 2 . save i
@@ -108,30 +121,43 @@ next = instruction >>= next'
     jump i comp = comp {pointer = i}
     save _ Computer {input = []} = error "No more input available"
     save i comp@Computer {input = (x:xs)} = update (i, x) (comp {input = xs})
-    write i comp = comp {output = state comp ! i : output comp}
-    update xs comp = comp {state = state comp // [xs]}
+    write i comp = comp {output = i : output comp}
+    update (i, x) comp = comp {state = M.insert i x (state comp)}
+    incBase i comp@Computer {base} = comp {base = base + i}
 
 instruction :: Computer -> Instruction
-instruction Computer {state, pointer} =
-  case mkOp op :: Int of
-    1 -> Add (vals ! 0, vals ! 1, vars ! 2)
-    2 -> Mult (vals ! 0, vals ! 1, vars ! 2)
-    3 -> Save (vars ! 0)
-    4 -> Print (vars ! 0)
-    5 -> JumpTrue (vals ! 0, vals ! 1)
-    6 -> JumpFalse (vals ! 0, vals ! 1)
-    7 -> LessThan (vals ! 0, vals ! 1, vars ! 2)
-    8 -> Equals (vals ! 0, vals ! 1, vars ! 2)
+instruction Computer {state, pointer, base} =
+  case op of
+    1 -> Add (head vals, vals !! 1, addr !! 2)
+    2 -> Mult (head vals, vals !! 1, addr !! 2)
+    3 -> Save (head addr)
+    4 -> Print (head vals)
+    5 -> JumpTrue (head vals, vals !! 1)
+    6 -> JumpFalse (head vals, vals !! 1)
+    7 -> LessThan (head vals, vals !! 1, addr !! 2)
+    8 -> Equals (head vals, vals !! 1, addr !! 2)
+    9 -> Base (head vals)
     99 -> Halt
     _ -> error "Unknown operation"
   where
-    vals = V.zipWith (expand state) (V.fromList $ mkModes modes) vars
-    vars = V.drop (pointer + 1) state
-    mkOp = read . reverse
-    mkModes = (++ repeat Ref) . mapMaybe (mode . digitToInt)
-    (op, modes) = splitAt 2 . reverse . show . (! pointer) $ state
-    expand _ Val = id
-    expand s Ref = (s !)
+    (op, modes) = split $ state ! pointer
+    vals = zipWith interpret modes raw
+    addr = zipWith literal modes raw
+    raw = drop (pointer + 1) (M.elems state)
+    interpret Ref = (state !!!)
+    interpret Val = id
+    interpret Rel = (state !!!) . (+ base)
+    literal Ref = id
+    literal Val = id
+    literal Rel = (+ base)
+    (!!!) = flip (M.findWithDefault 0)
+
+split :: Int -> (Int, [Mode])
+split i =
+  (read . reverse $ op, mapMaybe (mode . digitToInt) modes ++ repeat Ref)
+  where
+    (op, modes) = splitAt 2 . reverse . show $ i
     mode 0 = Just Ref
     mode 1 = Just Val
+    mode 2 = Just Rel
     mode _ = Nothing

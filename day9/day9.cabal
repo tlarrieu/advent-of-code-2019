@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 306fafa855c107fc3f47a68fde9af61be2c622ded57c7050b785726d4e7c937c
+-- hash: 8a6f231dc66b59bd76d2bd501099cae82648668d8ad2dc1b91f4a2842c1ed119
 
 name:           day9
 version:        0.1.0.0
@@ -23,8 +23,8 @@ library
   ghc-options: -Wall -O2
   build-depends:
       base >=4.7 && <5
+    , containers
     , split
-    , vector
   default-language: Haskell2010
 
 executable day9-exe
@@ -36,7 +36,23 @@ executable day9-exe
   ghc-options: -Wall -O2 -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , day9
     , split
-    , vector
+  default-language: Haskell2010
+
+test-suite test
+  type: exitcode-stdio-1.0
+  main-is: Tests.hs
+  other-modules:
+      Paths_day9
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -O2
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , day9
+    , hspec
+    , split
   default-language: Haskell2010

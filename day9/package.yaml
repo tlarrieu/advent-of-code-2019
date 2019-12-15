@@ -5,7 +5,7 @@ author:              "tlarrieu"
 dependencies:
 - base >= 4.7 && < 5
 - split
-- vector
+- containers
 
 ghc-options:
   - -Wall
@@ -13,6 +13,14 @@ ghc-options:
 
 library:
   source-dirs: src
+
+tests:
+  test:
+    main: Tests.hs
+    source-dirs: test
+    dependencies:
+      - day9
+      - hspec
 
 executables:
   day9-exe:
