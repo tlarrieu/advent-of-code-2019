@@ -1,0 +1,41 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: f5dd0cc32507aeda1428a90bcdfa1d27a988b0f0225e2d047e76b55468777157
+
+name:           day12
+version:        0.1.0.0
+author:         tlarrieu
+maintainer:     tlarrieu
+build-type:     Simple
+
+library
+  exposed-modules:
+      Common
+      Math
+      Moon
+  other-modules:
+      Paths_day12
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -O2
+  build-depends:
+      base >=4.7 && <5
+    , split
+  default-language: Haskell2010
+
+executable day12-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_day12
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -O2 -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , day12
+    , split
+  default-language: Haskell2010
