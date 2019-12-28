@@ -1,0 +1,34 @@
+name:                day13
+version:             0.1.0.0
+author:              "tlarrieu"
+
+dependencies:
+- base >= 4.7 && < 5
+- split
+- containers
+
+ghc-options:
+  - -Wall
+  - -O2
+
+library:
+  source-dirs: src
+
+tests:
+  test:
+    main: Tests.hs
+    source-dirs: test
+    dependencies:
+      - day13
+      - hspec
+
+executables:
+  day13-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - day13
