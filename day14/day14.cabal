@@ -1,0 +1,58 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: a05cd6b68e3c835c99f41d04b2c7562b59ce5c79d0d8bc2bedf8787243d4271e
+
+name:           day14
+version:        0.1.0.0
+author:         tlarrieu
+maintainer:     tlarrieu
+build-type:     Simple
+
+library
+  exposed-modules:
+      Common
+      Nanofactory
+  other-modules:
+      Paths_day14
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -O2
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , split
+  default-language: Haskell2010
+
+executable day14-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_day14
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -O2 -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , day14
+    , split
+  default-language: Haskell2010
+
+test-suite test
+  type: exitcode-stdio-1.0
+  main-is: Tests.hs
+  other-modules:
+      Paths_day14
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -O2
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , day14
+    , hspec
+    , split
+  default-language: Haskell2010
